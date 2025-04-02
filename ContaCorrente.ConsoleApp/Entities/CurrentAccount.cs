@@ -28,4 +28,9 @@ internal class CurrentAccount
         }
         AvailableBalance += amount;
     }
+    public void TransferTo(CurrentAccount account, decimal amount)
+    {
+        AvailableBalance -= amount;
+        account.AvailableBalance += amount;
+    }
 }
