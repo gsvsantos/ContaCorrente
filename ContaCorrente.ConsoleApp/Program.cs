@@ -1,4 +1,5 @@
 ﻿using ContaCorrente.ConsoleApp.Entities;
+using ContaCorrente.ConsoleApp.Entities.Utils;
 
 namespace ContaCorrente.ConsoleApp;
 
@@ -13,15 +14,12 @@ internal class Program
         account1.Deposit(300);
         account1.Deposit(500);
         account1.Withdraw(200);
-
         account1.TransferTo(account2, 400);
-        Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        Console.WriteLine($"Extrato da Conta #{account1.AccountNumber}");
-        Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        account1.ShowStatement();
-        Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        Console.WriteLine($"Extrato da Conta #{account2.AccountNumber}");
-        Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        account2.ShowStatement();
+
+        ViewWrite.ShowExtractHeader(account1);
+        account1.ShowExtract();
+
+        ViewWrite.ShowExtractHeader(account2);
+        account2.ShowExtract();
     }
 }
