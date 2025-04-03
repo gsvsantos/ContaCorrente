@@ -1,11 +1,13 @@
-﻿namespace ContaCorrente.ConsoleApp.Entities;
+﻿using ContaCorrente.ConsoleApp.Entities.Utils;
+
+namespace ContaCorrente.ConsoleApp.Entities;
 
 public class CurrentAccount
 {
     public int AccountNumber;
     public decimal AvailableBalance;
     public decimal OverdraftLimit;
-    public AccountMovement[] Transaction;
+    public AccountMovement[] Transactions;
     public int actualTransaction = 0;
 
     public CurrentAccount (int accountNumber, decimal availableBalance, decimal overdraftLimit, int maxTransactions = 10)
@@ -13,19 +15,19 @@ public class CurrentAccount
         AccountNumber = accountNumber;
         AvailableBalance = availableBalance;
         OverdraftLimit = overdraftLimit;
-        Transaction = new AccountMovement[maxTransactions];
+        Transactions = new AccountMovement[maxTransactions];
     }
 
     public void Withdraw(decimal amount)
     {
         if (amount <= 0)
         {
-            Console.WriteLine("O valor do saque precisa ser positivo.");
+            ViewWriteErrors.ValueToWithdrawNeedsToBePositive();
             return;
         }
         if (amount > AvailableBalance + OverdraftLimit)
         {
-            Console.WriteLine("Hello, World!");
+            ViewWriteErrors.InsuficientBalanceToWithdraw();
             return;
         }
         AvailableBalance -= amount;
@@ -35,7 +37,7 @@ public class CurrentAccount
     {
         if (amount <= 0)
         {
-            Console.WriteLine("O valor para depósito precisa ser positivo.");
+            ViewWriteErrors.ValueToDepositNeedsToBePositive();
             return;
         }
         AvailableBalance += amount;
@@ -45,12 +47,12 @@ public class CurrentAccount
     {
         if (amount <= 0)
         {
-            Console.WriteLine("O valor de transferência precisa ser positivo.");
+            ViewWriteErrors.ValueToTransferNeedsToBePositive();
             return;
         }
         if (amount > AvailableBalance + OverdraftLimit)
         {
-            Console.WriteLine("Seu saldo é insuficiente para essa transferência!");
+            ViewWriteErrors.InsuficientBalanceToTransfer();
             return;
         }
         Withdraw(amount);
@@ -58,34 +60,30 @@ public class CurrentAccount
     }
     public void AddTransaction(AccountMovement accountMovement)
     {
-        if (actualTransaction < Transaction.Length)
+        if (actualTransaction < Transactions.Length)
         {
-            Transaction[actualTransaction] = accountMovement;
+            Transactions[actualTransaction] = accountMovement;
             actualTransaction++;
         }
         else
         {
-            Console.WriteLine("Você atingiu o limite de transações!");
+            ViewWriteErrors.HitMaxTransactionLimit();
         }
     }
-    public void ShowStatement()
+    public void ShowExtract()
     {
-        Console.WriteLine("Movimentações:");
-        Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        ViewWrite.AccountMovementMessage();
         if (actualTransaction == 0)
         {
-            Console.WriteLine("Ainda não foi feito nenhum movimento nesta conta!");
+            ViewWriteErrors.TransactionHistoryIsEmpty();
         }
         else
         {
             for (int i = 0; i < actualTransaction; i++)
             {
-                Console.WriteLine($"{Transaction[i].Type} de R$ {Transaction[i].Amount:F2}");
+                ViewWrite.TransactionsMessage(Transactions[i].Type, Transactions[i].Amount);
             }
         }
-        Console.WriteLine("\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        Console.WriteLine($"Saldo atual: R$ {AvailableBalance:F2}");
-        Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
-
+        ViewWrite.ActualBalanceHeader(AvailableBalance);
     }
 }
