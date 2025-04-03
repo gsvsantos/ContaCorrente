@@ -8,6 +8,14 @@ public class CurrentAccount
     public AccountMovement[] Transaction;
     public int actualTransaction = 0;
 
+    public CurrentAccount (int accountNumber, decimal availableBalance, decimal overdraftLimit, int maxTransactions = 10)
+    {
+        AccountNumber = accountNumber;
+        AvailableBalance = availableBalance;
+        OverdraftLimit = overdraftLimit;
+        Transaction = new AccountMovement[maxTransactions];
+    }
+
     public void Withdraw(decimal amount)
     {
         if (amount <= 0)
@@ -28,12 +36,23 @@ public class CurrentAccount
         if (amount <= 0)
         {
             Console.WriteLine("O valor para depósito precisa ser positivo.");
+            return;
         }
         AvailableBalance += amount;
         AddTransaction(new AccountMovement(amount, "Crédito"));
     }
     public void TransferTo(CurrentAccount account, decimal amount)
     {
+        if (amount <= 0)
+        {
+            Console.WriteLine("O valor de transferência precisa ser positivo.");
+            return;
+        }
+        if (amount > AvailableBalance + OverdraftLimit)
+        {
+            Console.WriteLine("Seu saldo é insuficiente para essa transferência!");
+            return;
+        }
         Withdraw(amount);
         account.Deposit(amount);
     }
@@ -44,25 +63,24 @@ public class CurrentAccount
             Transaction[actualTransaction] = accountMovement;
             actualTransaction++;
         }
+        else
+        {
+            Console.WriteLine("Você atingou o limite de transações!");
+        }
     }
     public void ShowStatement()
     {
         Console.WriteLine("Movimentações:");
         Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        for (int i = 0; i < Transaction.Length; i++)
+        if (actualTransaction == 0)
         {
-            if (Transaction[i] != null && Transaction[i].Type == "Débito")
-            {
-                Console.WriteLine($"{Transaction[i].Type}  de R$ {Transaction[i].Amount:F2}");
-            }
-            else if (Transaction[i] != null && Transaction[i].Type == "Crédito")
+            Console.WriteLine("Ainda não foi feito nenhum movimento nesta conta!");
+        }
+        else
+        {
+            for (int i = 0; i < actualTransaction; i++)
             {
                 Console.WriteLine($"{Transaction[i].Type} de R$ {Transaction[i].Amount:F2}");
-            }
-            if (Transaction[0] == null)
-            {
-                Console.WriteLine("Ainda não foi feito nenhum movimento nesta conta!");
-                break;
             }
         }
         Console.WriteLine("\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
