@@ -15,9 +15,9 @@ public class CurrentAccount
             Console.WriteLine("O valor do saque precisa ser positivo.");
             return;
         }
-        if (amount > AvailableBalance)
+        if (amount > AvailableBalance + OverdraftLimit)
         {
-            Console.WriteLine("Você não tem esse valor disponível em conta.");
+            Console.WriteLine("Hello, World!");
             return;
         }
         AvailableBalance -= amount;
@@ -66,7 +66,7 @@ public class CurrentAccount
             }
         }
         Console.WriteLine("\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        Console.WriteLine($"Saldo atual: R$ {AvailableBalance}");
+        Console.WriteLine($"Saldo atual: R$ {AvailableBalance:F2}");
         Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
 
     }
