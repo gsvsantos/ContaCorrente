@@ -65,7 +65,7 @@ public class CurrentAccount
         }
         else
         {
-            Console.WriteLine("Você atingou o limite de transações!");
+            Console.WriteLine("Você atingiu o limite de transações!");
         }
     }
     public void ShowStatement()
